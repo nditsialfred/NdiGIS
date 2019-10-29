@@ -1,0 +1,49 @@
+version: '2'
+
+volumes:
+  nextcloud:
+  geodb:
+  gtsmysql:
+
+services:
+  gtsmysql:
+    image: ndigis/gtsmysql:1.0
+    ports:
+      - 3306:3306
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - gtsmysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD='!N63444764.'
+      - MYSQL_PASSWORD='!N63444764.'
+      - MYSQL_DATABASE=nextcloud
+      - MYSQL_USER=nextcloud
+      - MYSQL_ROOT_HOST=%
+  
+  geodb:
+    image: ndigis/geodb:1.0
+    ports:
+      - 5432:5432
+    restart: always
+    environment:
+      - POSTGRES_USER='postgres'
+      - POSTGRES_PASSWORD='!N63444764.'
+    
+  opengts:
+    image: ndigis/gts:1.0
+    ports:
+      - 8080:8080
+    restart: always
+    links:
+      - gtsmysql
+
+  app:
+    image: nextcloud
+    ports:
+      - 6464:80
+    links:
+      - geodb
+    volumes:
+      - nextcloud:/var/www/html
+    restart: always
