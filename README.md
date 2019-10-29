@@ -1,0 +1,2 @@
+# NdiGIS
+Database schema project
